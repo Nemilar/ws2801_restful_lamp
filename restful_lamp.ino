@@ -53,6 +53,7 @@
 #define SOLID 4
 #define RAINBOWCYCLE 5
 #define PULSATE 6
+#define MURICA 1776
 
 int controllerCode = NOCODE;
 /********************************************/
@@ -100,6 +101,8 @@ void setup() {
 *   we live inside the rainbow function for a lengthy period of time before returning (due to the
 *   calls to delay), and the client would otherwise timeout before we got to it.
 */
+
+
 
 EthernetClient pulsate(int originalr, int originalg, int originalb, uint8_t wait, uHTTP *server) {
   int i, j;
@@ -207,6 +210,28 @@ void solid(uint32_t c)
   }
 }
 
+
+void murica()
+{
+  Serial.println("Kill all the commies");
+  uint32_t c;
+  int i;
+  int i1 = 0;
+  int i2 = (strip.numPixels());
+  for (i=0; i<=i2; i++)
+  {
+    c = Color(255, 0, 0);
+    strip.setPixelColor(i, c);
+    strip.show();
+  }
+  for (i=i2; i<=strip.numPixels(); i++)
+  {
+    c = Color(0, 0, 255);
+    strip.setPixelColor(i, c);
+    strip.show();
+  }  
+}
+
 /** Here, assume delay is 50ms, 50*25 (assume strip length 25) = 1.25 seconds
 * maximum before a client is heard.  Fine.  Maybe TODO fix this */
 // fill the dots one after the other with said color
@@ -298,6 +323,9 @@ void loop() {
         case RAINBOWCYCLE:
           response = rainbowCycle(interval, server);
           break;
+        case MURICA:
+          murica();
+          break;
         case COLORWIPE:
           colorWipe(Color(255, 0, 0), interval);
           colorWipe(Color(0, 255, 0), interval);
@@ -339,6 +367,11 @@ void loop() {
         controllerCode = RAINBOWCYCLE;
         interval = atoi(server->uri(2));
 
+      }
+      else if (strcmp(server->uri(1), "murica") == 0)
+      {
+        controllerCode = MURICA;
+        Serial.println("Freedom mode activated");
       }
       else if (strcmp(server->uri(1), "solid") == 0)
       {
